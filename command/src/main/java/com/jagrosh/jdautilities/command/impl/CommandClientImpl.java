@@ -18,20 +18,20 @@ package com.jagrosh.jdautilities.command.impl;
 import com.jagrosh.jdautilities.command.*;
 import com.jagrosh.jdautilities.commons.utils.FixedSizeCache;
 import com.jagrosh.jdautilities.commons.utils.SafeIdUtil;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageDeleteEvent;
-import net.dv8tion.jda.core.hooks.EventListener;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.Event;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
 import com.jagrosh.jdautilities.command.Command.Category;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.impl.JDAImpl;
-import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.requests.Requester;
-import net.dv8tion.jda.core.utils.Checks;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.internal.JDAImpl;
+import net.dv8tion.jda.internal.requests.Requester;
+import net.dv8tion.jda.internal.utils.Checks;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -49,16 +49,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.events.ShutdownEvent;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.events.ShutdownEvent;
 
 /**
  * An implementation of {@link com.jagrosh.jdautilities.command.CommandClient CommandClient} to be used by a bot.
  * 
- * <p>This is a listener usable with {@link net.dv8tion.jda.core.JDA JDA}, as it implements
- * {@link net.dv8tion.jda.core.hooks.EventListener EventListener} in order to catch and use different kinds of
- * {@link net.dv8tion.jda.core.events.Event Event}s. The primary usage of this is where the CommandClient implementation
- * takes {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}s, and automatically
+ * <p>This is a listener usable with {@link net.dv8tion.jda.api.JDA JDA}, as it implements
+ * {@link net.dv8tion.jda.api.hooks.EventListener EventListener} in order to catch and use different kinds of
+ * {@link net.dv8tion.jda.api.events.Event Event}s. The primary usage of this is where the CommandClient implementation
+ * takes {@link net.dv8tion.jda.api.events.message.MessageReceivedEvent MessageReceivedEvent}s, and automatically
  * processes arguments, and provide them to a {@link com.jagrosh.jdautilities.command.Command Command} for
  * running and execution.
  * 
@@ -71,7 +71,7 @@ public class CommandClientImpl implements CommandClient, EventListener
     private static final String DEFAULT_PREFIX = "@mention";
 
     private final OffsetDateTime start;
-    private final Game game;
+    private final Activity game;
     private final OnlineStatus status;
     private final String ownerId;
     private final String[] coOwnerIds;
@@ -100,7 +100,7 @@ public class CommandClientImpl implements CommandClient, EventListener
     private CommandListener listener = null;
     private int totalGuilds;
 
-    public CommandClientImpl(String ownerId, String[] coOwnerIds, String prefix, String altprefix, Game game, OnlineStatus status, String serverInvite,
+    public CommandClientImpl(String ownerId, String[] coOwnerIds, String prefix, String altprefix, Activity game, OnlineStatus status, String serverInvite,
             String success, String warning, String error, String carbonKey, String botsKey, String botsOrgKey, ArrayList<Command> commands,
             boolean useHelp, Consumer<CommandEvent> helpConsumer, String helpWord, ScheduledExecutorService executor, int linkedCacheSize, AnnotatedModuleCompiler compiler,
             GuildSettingsManager manager)
@@ -439,7 +439,7 @@ public class CommandClientImpl implements CommandClient, EventListener
 
         else if(event instanceof GuildJoinEvent)
         {
-            if(((GuildJoinEvent)event).getGuild().getSelfMember().getJoinDate()
+            if(((GuildJoinEvent)event).getGuild().getSelfMember().getTimeJoined()
                     .plusMinutes(10).isAfter(OffsetDateTime.now()))
                 sendStats(event.getJDA());
         }
@@ -466,7 +466,7 @@ public class CommandClientImpl implements CommandClient, EventListener
         }
         textPrefix = prefix.equals(DEFAULT_PREFIX) ? "@"+event.getJDA().getSelfUser().getName()+" " : prefix;
         event.getJDA().getPresence().setPresence(status==null ? OnlineStatus.ONLINE : status, 
-                game==null ? null : "default".equals(game.getName()) ? Game.playing("Type "+textPrefix+helpWord) : game);
+                game==null ? null : "default".equals(game.getName()) ? Activity.playing("Type "+textPrefix+helpWord) : game);
 
         // Start SettingsManager if necessary
         GuildSettingsManager<?> manager = getSettingsManager();
@@ -563,7 +563,7 @@ public class CommandClientImpl implements CommandClient, EventListener
 
     private void sendStats(JDA jda)
     {
-        OkHttpClient client = ((JDAImpl) jda).getHttpClientBuilder().build();
+        OkHttpClient client = ((JDAImpl) jda).getHttpClient();
 
         if(carbonKey != null)
         {

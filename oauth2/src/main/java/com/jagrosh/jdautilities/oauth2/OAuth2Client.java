@@ -23,7 +23,7 @@ import com.jagrosh.jdautilities.oauth2.session.Session;
 import com.jagrosh.jdautilities.oauth2.session.SessionController;
 import com.jagrosh.jdautilities.oauth2.exceptions.InvalidStateException;
 import com.jagrosh.jdautilities.oauth2.state.StateController;
-import net.dv8tion.jda.core.utils.Checks;
+import net.dv8tion.jda.internal.utils.Checks;
 import okhttp3.OkHttpClient;
 
 import javax.annotation.CheckReturnValue;

@@ -22,20 +22,20 @@ import java.util.function.Consumer;
 import com.jagrosh.jdautilities.command.impl.AnnotatedModuleCompilerImpl;
 import com.jagrosh.jdautilities.command.impl.CommandClientImpl;
 import java.util.concurrent.ScheduledExecutorService;
-import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Activity;
 
 /**
  * A simple builder used to create a {@link com.jagrosh.jdautilities.command.impl.CommandClientImpl CommandClientImpl}.
  * 
  * <p>Once built, add the {@link com.jagrosh.jdautilities.command.CommandClient CommandClient} as an EventListener to
- * {@link net.dv8tion.jda.core.JDA JDA} and it will automatically handle commands with ease!
+ * {@link net.dv8tion.jda.api.JDA JDA} and it will automatically handle commands with ease!
  * 
  * @author John Grosh (jagrosh)
  */
 public class CommandClientBuilder
 {
-    private Game game = Game.playing("default");
+    private Activity game = Activity.playing("default");
     private OnlineStatus status = OnlineStatus.ONLINE;
     private String ownerId;
     private String[] coOwnerIds;
@@ -222,7 +222,7 @@ public class CommandClientBuilder
     }
 
     /**
-     * Sets the {@link net.dv8tion.jda.core.entities.Game Game} to use when the bot is ready.
+     * Sets the {@link net.dv8tion.jda.api.entities.Activity Game} to use when the bot is ready.
      * <br>Can be set to {@code null} for no game.
      * 
      * @param  game
@@ -230,26 +230,26 @@ public class CommandClientBuilder
      *         
      * @return This builder
      */
-    public CommandClientBuilder setGame(Game game)
+    public CommandClientBuilder setGame(Activity game)
     {
         this.game = game;
         return this;
     }
     
     /**
-     * Sets the {@link net.dv8tion.jda.core.entities.Game Game} the bot will use as the default: 
+     * Sets the {@link net.dv8tion.jda.api.entities.Activity Game} the bot will use as the default:
      * 'Playing <b>Type [prefix]help</b>'
      * 
      * @return This builder
      */
     public CommandClientBuilder useDefaultGame()
     {
-        this.game = Game.playing("default");
+        this.game = Activity.playing("default");
         return this;
     }
     
     /**
-     * Sets the {@link net.dv8tion.jda.core.OnlineStatus OnlineStatus} the bot will use once Ready
+     * Sets the {@link net.dv8tion.jda.api.OnlineStatus OnlineStatus} the bot will use once Ready
      * This defaults to ONLINE
      *
      * @param  status
@@ -443,7 +443,7 @@ public class CommandClientBuilder
     
     /**
      * Sets the internal size of the client's {@link com.jagrosh.jdautilities.commons.utils.FixedSizeCache FixedSizeCache}
-     * used for caching and pairing the bot's response {@link net.dv8tion.jda.core.entities.Message Message}s with
+     * used for caching and pairing the bot's response {@link net.dv8tion.jda.api.entities.Message Message}s with
      * the calling Message's ID.
      *
      * <p>Higher cache size means that decay of cache contents will most likely occur later, allowing the deletion of
