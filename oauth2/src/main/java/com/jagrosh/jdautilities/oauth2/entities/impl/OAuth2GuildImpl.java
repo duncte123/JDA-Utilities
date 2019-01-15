@@ -15,6 +15,7 @@
  */
 package com.jagrosh.jdautilities.oauth2.entities.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,7 +85,7 @@ public class OAuth2GuildImpl implements OAuth2Guild
     @Override
     public List<Permission> getPermissions()
     {
-        return Permission.getPermissions(permissions).stream().collect(Collectors.toUnmodifiableList());
+        return Collections.unmodifiableList(new ArrayList<>(Permission.getPermissions(permissions)));
     }
     
     @Override
