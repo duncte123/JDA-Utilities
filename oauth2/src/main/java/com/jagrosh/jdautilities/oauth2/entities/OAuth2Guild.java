@@ -19,6 +19,7 @@ import com.jagrosh.jdautilities.oauth2.OAuth2Client;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ISnowflake;
 
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -73,7 +74,7 @@ public interface OAuth2Guild extends ISnowflake
      *
      * @return The Session User's Permissions for the Guild.
      */
-    List<Permission> getPermissions();
+    EnumSet<Permission> getPermissions();
 
     /**
      * Whether or not the Session User is the owner of the Guild.
