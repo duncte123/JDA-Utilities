@@ -20,6 +20,7 @@ import com.jagrosh.jdautilities.commons.utils.FixedSizeCache;
 import com.jagrosh.jdautilities.commons.utils.SafeIdUtil;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.Event;
+import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import com.jagrosh.jdautilities.command.Command.Category;
@@ -33,6 +34,7 @@ import net.dv8tion.jda.internal.JDAImpl;
 import net.dv8tion.jda.internal.requests.Requester;
 import net.dv8tion.jda.internal.utils.Checks;
 import okhttp3.*;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -429,7 +431,7 @@ public class CommandClientImpl implements CommandClient, EventListener
     }
 
     @Override
-    public void onEvent(Event event)
+    public void onEvent(@NotNull GenericEvent event)
     {
         if(event instanceof MessageReceivedEvent)
             onMessageReceived((MessageReceivedEvent)event);

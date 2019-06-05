@@ -214,13 +214,13 @@ public final class FinderUtil
      * @return A possibly-empty {@link java.util.List List} of Users found by the query from the provided JDA instance,
      *         or {@code null} if an {@link java.lang.Exception Exception} is thrown while initially getting banned Users.
      *
-     * @see    net.dv8tion.jda.api.entities.Guild#getBanList() Guild#getBanList()
+     * @see    net.dv8tion.jda.api.entities.Guild#retrieveBanList() Guild#getBanList()
      */
     public static List<User> findBannedUsers(String query, Guild guild)
     {
         List<User> bans;
         try {
-            bans = guild.getBanList().complete().stream()
+            bans = guild.retrieveBanList().complete().stream()
                 .map(Guild.Ban::getUser)
                 .collect(Collectors.toList());
         } catch(Exception e) {

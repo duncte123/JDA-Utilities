@@ -19,6 +19,7 @@ import com.jagrosh.jdautilities.oauth2.OAuth2Client;
 import com.jagrosh.jdautilities.oauth2.Scope;
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild;
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2User;
+import com.jagrosh.jdautilities.oauth2.exceptions.InvalidStateException;
 import com.jagrosh.jdautilities.oauth2.exceptions.MissingScopeException;
 import com.jagrosh.jdautilities.oauth2.requests.OAuth2Action;
 import com.jagrosh.jdautilities.oauth2.requests.OAuth2Requester;
@@ -28,21 +29,19 @@ import com.jagrosh.jdautilities.oauth2.session.Session;
 import com.jagrosh.jdautilities.oauth2.session.SessionController;
 import com.jagrosh.jdautilities.oauth2.session.SessionData;
 import com.jagrosh.jdautilities.oauth2.state.DefaultStateController;
-import com.jagrosh.jdautilities.oauth2.exceptions.InvalidStateException;
 import com.jagrosh.jdautilities.oauth2.state.StateController;
 import net.dv8tion.jda.api.exceptions.HttpException;
-import net.dv8tion.jda.api.utils.MiscUtil;
+import net.dv8tion.jda.api.utils.data.DataArray;
+import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.requests.Method;
 import net.dv8tion.jda.internal.requests.Requester;
 import net.dv8tion.jda.internal.utils.Checks;
+import net.dv8tion.jda.internal.utils.EncodingUtil;
 import net.dv8tion.jda.internal.utils.IOUtil;
 import net.dv8tion.jda.internal.utils.JDALogger;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -85,7 +84,7 @@ public class OAuth2ClientImpl implements OAuth2Client
     {
         Checks.notNull(redirectUri, "Redirect URI");
 
-        return OAuth2URL.AUTHORIZE.compile(clientId, MiscUtil.encodeUTF8(redirectUri),
+        return OAuth2URL.AUTHORIZE.compile(clientId, EncodingUtil.encodeUTF8(redirectUri),
             Scope.join(scopes), stateController.generateNewState(redirectUri));
     }
 
@@ -100,7 +99,7 @@ public class OAuth2ClientImpl implements OAuth2Client
             throw new InvalidStateException(String.format("No state '%s' exists!", state));
 
         return new OAuth2Action<Session>(this, Method.POST, OAuth2URL.TOKEN.compile(clientId,
-            MiscUtil.encodeUTF8(redirectUri), code, clientSecret))
+            EncodingUtil.encodeUTF8(redirectUri), code, clientSecret))
         {
             @Override
             protected Headers getHeaders()
@@ -114,7 +113,7 @@ public class OAuth2ClientImpl implements OAuth2Client
                 if(!response.isSuccessful())
                     throw failure(response);
 
-                JSONObject body = new JSONObject(new JSONTokener(Requester.getBody(response)));
+                DataObject body = DataObject.fromJson(Requester.getBody(response));
 
                 String[] scopeStrings = body.getString("scope").split(" ");
                 Scope[] scopes = new Scope[scopeStrings.length];
@@ -147,11 +146,11 @@ public class OAuth2ClientImpl implements OAuth2Client
             {
                 if(!response.isSuccessful())
                     throw failure(response);
-                JSONObject body = new JSONObject(new JSONTokener(Requester.getBody(response)));
+                DataObject body = DataObject.fromJson(Requester.getBody(response));
                 return new OAuth2UserImpl(OAuth2ClientImpl.this, session, body.getLong("id"),
                     body.getString("username"), body.getString("discriminator"),
-                    body.optString("avatar", null), body.optString("email", null),
-                    body.optBoolean("verified", false), body.getBoolean("mfa_enabled"));
+                    body.getString("avatar", null), body.getString("email", null),
+                    body.getBoolean("verified", false), body.getBoolean("mfa_enabled"));
             }
         };
     }
@@ -175,14 +174,14 @@ public class OAuth2ClientImpl implements OAuth2Client
                 if(!response.isSuccessful())
                     throw failure(response);
 
-                JSONArray body = new JSONArray(new JSONTokener(Requester.getBody(response)));
+                DataArray body = DataArray.fromJson(Requester.getBody(response));
                 List<OAuth2Guild> list = new LinkedList<>();
-                JSONObject obj;
+                DataObject obj;
                 for(int i = 0; i < body.length(); i++)
                 {
-                    obj = body.getJSONObject(i);
+                    obj = body.getObject(i);
                     list.add(new OAuth2GuildImpl(OAuth2ClientImpl.this, obj.getLong("id"),
-                        obj.getString("name"), obj.optString("icon", null), obj.getBoolean("owner"),
+                        obj.getString("name"), obj.getString("icon", null), obj.getBoolean("owner"),
                         obj.getInt("permissions")));
                 }
                 return list;

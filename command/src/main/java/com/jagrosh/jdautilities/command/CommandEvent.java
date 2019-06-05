@@ -372,7 +372,7 @@ public class CommandEvent
     public void reply(String message, File file, String filename)
     {
         Message msg = message==null ? null : new MessageBuilder().append(splitMessage(message).get(0)).build();
-        event.getChannel().sendFile(file, filename, msg).queue();
+        event.getChannel().sendFile(file, filename).apply(msg).queue();
     }
 
     /**
@@ -452,7 +452,7 @@ public class CommandEvent
     {
         Message msg = message==null ? null : new MessageBuilder().append(splitMessage(message).get(0)).build();
         try {
-            event.getChannel().sendFile(file, filename, msg).queue();
+            event.getChannel().sendFile(file, filename).apply(msg).queue();
         } catch(Exception e) {
             reply(alternateMessage);
         }
@@ -736,7 +736,7 @@ public class CommandEvent
         else
         {
             Message msg = message==null ? null : new MessageBuilder().append(splitMessage(message).get(0)).build();
-            event.getAuthor().openPrivateChannel().queue(pc -> pc.sendFile(file, filename, msg).queue());
+            event.getAuthor().openPrivateChannel().queue(pc -> pc.sendFile(file, filename).apply(msg).queue());
         }
     }
 

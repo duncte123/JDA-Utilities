@@ -15,7 +15,7 @@
  */
 package com.jagrosh.jdautilities.commons.waiter;
 
-import net.dv8tion.jda.api.events.Event;
+import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 
 /**
  * <p>The EventWaiter is capable of handling specialized forms of
- * {@link net.dv8tion.jda.api.events.Event Event} that must meet criteria not normally specifiable
+ * {@link net.dv8tion.jda.api.events.GenericEvent GenericEvent} that must meet criteria not normally specifiable
  * without implementation of an {@link net.dv8tion.jda.api.hooks.EventListener EventListener}.
  *
  * <p>Creating an EventWaiter requires provision and/or creation of a
@@ -135,7 +135,7 @@ public class EventWaiter implements EventListener
     }
 
     /**
-     * Waits an indefinite amount of time for an {@link net.dv8tion.jda.api.events.Event Event} that
+     * Waits an indefinite amount of time for an {@link net.dv8tion.jda.api.events.GenericEvent GenericEvent} that
      * returns {@code true} when tested with the provided {@link java.util.function.Predicate Predicate}.
      * 
      * <p>When this occurs, the provided {@link java.util.function.Consumer Consumer} will accept and
@@ -157,13 +157,13 @@ public class EventWaiter implements EventListener
      *             <li>2) The internal threadpool is shut down, meaning that no more tasks can be submitted.</li>
      *         </ul>
      */
-    public <T extends Event> void waitForEvent(Class<T> classType, Predicate<T> condition, Consumer<T> action)
+    public <T extends GenericEvent> void waitForEvent(Class<T> classType, Predicate<T> condition, Consumer<T> action)
     {
         waitForEvent(classType, condition, action, -1, null, null);
     }
     
     /**
-     * Waits a predetermined amount of time for an {@link net.dv8tion.jda.api.events.Event Event} that
+     * Waits a predetermined amount of time for an {@link net.dv8tion.jda.api.events.GenericEvent GenericEvent} that
      * returns {@code true} when tested with the provided {@link java.util.function.Predicate Predicate}.
      * 
      * <p>Once started, there are two possible outcomes:
@@ -198,7 +198,7 @@ public class EventWaiter implements EventListener
      *             <li>2) The internal threadpool is shut down, meaning that no more tasks can be submitted.</li>
      *         </ul>
      */
-    public <T extends Event> void waitForEvent(Class<T> classType, Predicate<T> condition, Consumer<T> action,
+    public <T extends GenericEvent> void waitForEvent(Class<T> classType, Predicate<T> condition, Consumer<T> action,
                                                long timeout, TimeUnit unit, Runnable timeoutAction)
     {
         Checks.check(!isShutdown(), "Attempted to register a WaitingEvent while the EventWaiter's threadpool was already shut down!");
@@ -223,7 +223,7 @@ public class EventWaiter implements EventListener
     @Override
     @SubscribeEvent
     @SuppressWarnings("unchecked")
-    public final void onEvent(Event event)
+    public final void onEvent(GenericEvent event)
     {
         Class c = event.getClass();
 
@@ -269,7 +269,7 @@ public class EventWaiter implements EventListener
         threadpool.shutdown();
     }
     
-    private class WaitingEvent<T extends Event>
+    private class WaitingEvent<T extends GenericEvent>
     {
         final Predicate<T> condition;
         final Consumer<T> action;
