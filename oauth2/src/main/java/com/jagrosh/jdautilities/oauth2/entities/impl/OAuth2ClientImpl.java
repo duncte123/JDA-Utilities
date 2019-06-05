@@ -39,9 +39,7 @@ import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.EncodingUtil;
 import net.dv8tion.jda.internal.utils.IOUtil;
 import net.dv8tion.jda.internal.utils.JDALogger;
-import okhttp3.Headers;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
+import okhttp3.*;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -89,7 +87,7 @@ public class OAuth2ClientImpl implements OAuth2Client
     }
 
     @Override
-    public OAuth2Action<Session> startSession(String code, String state, String identifier) throws InvalidStateException
+    public OAuth2Action<Session> startSession(String code, String state, String identifier, Scope... scopes) throws InvalidStateException
     {
         Checks.notEmpty(code, "code");
         Checks.notEmpty(state, "state");
@@ -98,13 +96,21 @@ public class OAuth2ClientImpl implements OAuth2Client
         if(redirectUri == null)
             throw new InvalidStateException(String.format("No state '%s' exists!", state));
 
-        return new OAuth2Action<Session>(this, Method.POST, OAuth2URL.TOKEN.compile(clientId,
-            EncodingUtil.encodeUTF8(redirectUri), code, clientSecret))
+
+        OAuth2URL oAuth2URL = OAuth2URL.TOKEN;
+        return new OAuth2Action<Session>(this, Method.POST, oAuth2URL.getRouteWithBaseUrl())
         {
             @Override
             protected Headers getHeaders()
             {
                 return Headers.of("Content-Type", "x-www-form-urlencoded");
+            }
+
+            @Override
+            protected RequestBody getBody() {
+                return RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"),
+                    oAuth2URL.compileQueryParams(clientId, EncodingUtil.encodeUTF8(redirectUri), code, clientSecret,
+                        Scope.join(true, scopes)));
             }
 
             @Override
