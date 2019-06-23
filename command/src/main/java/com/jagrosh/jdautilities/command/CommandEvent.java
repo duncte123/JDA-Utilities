@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
+import net.dv8tion.jda.api.utils.AttachmentOption;
 import net.dv8tion.jda.internal.utils.Checks;
 
 import java.io.File;
@@ -338,7 +339,7 @@ public class CommandEvent
      * sending the response as a {@link net.dv8tion.jda.api.entities.Message Message}
      * automatically does {@link net.dv8tion.jda.api.requests.RestAction#queue() RestAction#queue()}.
      *
-     * <p>This method uses {@link net.dv8tion.jda.api.entities.MessageChannel#sendFile(File, String, Message) MessageChannel#sendFile(File, String, Message)}
+     * <p>This method uses {@link net.dv8tion.jda.api.entities.MessageChannel#sendFile(File, String, AttachmentOption...) MessageChannel#sendFile(File, String, AttachmentOption...)}
      * to send the File. For more information on what a bot may send using this, you may find the info in that method.
      *
      * @param  file
@@ -348,7 +349,7 @@ public class CommandEvent
      */
     public void reply(File file, String filename)
     {
-        event.getChannel().sendFile(file, filename, null).queue();
+        event.getChannel().sendFile(file, filename).queue();
     }
 
     /**
@@ -359,7 +360,7 @@ public class CommandEvent
      * sending the response as a {@link net.dv8tion.jda.api.entities.Message Message}
      * automatically does {@link net.dv8tion.jda.api.requests.RestAction#queue() RestAction#queue()}.
      *
-     * <p>This method uses {@link net.dv8tion.jda.api.entities.MessageChannel#sendFile(File, String, Message) MessageChannel#sendFile(File, String, Message)}
+     * <p>This method uses {@link net.dv8tion.jda.api.entities.MessageChannel#sendFile(File, String, AttachmentOption...)}  MessageChannel#sendFile(File, String, AttachmentOption...)}
      * to send the File. For more information on what a bot may send using this, you may find the info in that method.
      *
      * @param  message
@@ -428,7 +429,7 @@ public class CommandEvent
      * sending the response as a {@link net.dv8tion.jda.api.entities.Message Message}
      * automatically does {@link net.dv8tion.jda.api.requests.RestAction#queue() RestAction#queue()}.
      *
-     * <p>This method uses {@link net.dv8tion.jda.api.entities.MessageChannel#sendFile(File, String, Message) MessageChannel#sendFile(File, String, Message)}
+     * <p>This method uses {@link net.dv8tion.jda.api.entities.MessageChannel#sendFile(File, String, AttachmentOption...) MessageChannel#sendFile(File, String, AttachmentOption...)}
      * to send the File. For more information on what a bot may send using this, you may find the info in that method.
      *
      * <p><b>NOTE:</b> This alternate String message can exceed the 2000 character cap, and will
@@ -719,7 +720,7 @@ public class CommandEvent
      * sending the response as a {@link net.dv8tion.jda.api.entities.Message Message}
      * automatically does {@link net.dv8tion.jda.api.requests.RestAction#queue() RestAction#queue()}.
      *
-     * <p>This method uses {@link net.dv8tion.jda.api.entities.MessageChannel#sendFile(File, String, Message) MessageChannel#sendFile(File, String, Message)}
+     * <p>This method uses {@link net.dv8tion.jda.api.entities.MessageChannel#sendFile(File, String, AttachmentOption...) MessageChannel#sendFile(File, String, AttachmentOption...)}
      * to send the File. For more information on what a bot may send using this, you may find the info in that method.
      *
      * @param  message
